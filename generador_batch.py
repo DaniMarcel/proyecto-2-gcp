@@ -10,10 +10,10 @@ NUM_COMERCIOS = 20
 NUM_TRANSACCIONES = 5000  # cantidad de compras que vamos a generar
 fake = Faker('es_CL')     # usamos locale chileno para los datos
 
-print("🚀 Iniciando generación del Data Lake Batch...")
+print("Iniciando generacion del Data Lake Batch...")
 
 # --- 1. Generamos la tabla de clientes ---
-print("👤 Generando Clientes...")
+print("Generando Clientes...")
 clientes = []
 for _ in range(NUM_CLIENTES):
     cliente = {
@@ -28,7 +28,7 @@ for _ in range(NUM_CLIENTES):
 df_clientes = pd.DataFrame(clientes)
 
 # --- 2. Generamos la tabla de comercios ---
-print("🏢 Generando Comercios...")
+print("Generando Comercios...")
 rubros = ["Supermercado", "Combustible", "Retail", "Restaurante", "Tecnología", "Viajes"]
 comercios = []
 for _ in range(NUM_COMERCIOS):
@@ -43,7 +43,7 @@ for _ in range(NUM_COMERCIOS):
 df_comercios = pd.DataFrame(comercios)
 
 # --- 3. Transacciones (tabla de hechos) ---
-print("💳 Generando Transacciones con patrones de Fraude y Errores...")
+print("Generando Transacciones con patrones de Fraude y Errores...")
 transacciones = []
 
 for _ in range(NUM_TRANSACCIONES):
@@ -100,7 +100,7 @@ df_clientes.to_csv("data_lake/clientes_master.csv", index=False)
 df_comercios.to_csv("data_lake/comercios_master.csv", index=False)
 df_transacciones.to_csv("data_lake/transacciones_diarias.csv", index=False)
 
-print(f"✅ ¡Listo! Archivos generados en la carpeta 'data_lake':")
+print(f"Listo! Archivos generados en la carpeta 'data_lake':")
 print(f"   - Clientes: {len(df_clientes)} registros")
 print(f"   - Comercios: {len(df_comercios)} registros")
 print(f"   - Transacciones: {len(df_transacciones)} registros")
