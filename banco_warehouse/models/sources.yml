@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: banco_origen
+    database: dataengineerp
+    schema: banco_raw  # <--- El dataset donde cargamos los CSVs
+    tables:
+      - name: raw_clientes
+      - name: raw_comercios
+      - name: raw_transacciones
