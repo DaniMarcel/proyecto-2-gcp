@@ -18,16 +18,16 @@ def load_table(table_name, file_name, schema):
     )
 
     uri = f"gs://{BUCKET_NAME}/{file_name}"
-    print(f"⏳ Cargando {file_name} en {table_name}...")
+    print(f"Cargando {file_name} en {table_name}...")
     
     try:
         load_job = client.load_table_from_uri(uri, table_ref, job_config=job_config)
         load_job.result()  # esperamos a que termine
         
         table = client.get_table(table_ref)
-        print(f"✅ {table_name}: {table.num_rows} filas cargadas correctamente.")
+        print(f"{table_name}: {table.num_rows} filas cargadas correctamente.")
     except Exception as e:
-        print(f"❌ Error cargando {table_name}: {e}")
+        print(f"Error cargando {table_name}: {e}")
 
 if __name__ == "__main__":
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credenciales.json"

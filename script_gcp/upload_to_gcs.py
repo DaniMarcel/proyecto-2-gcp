@@ -14,15 +14,15 @@ def upload_files():
     # vemos si el bucket ya existe, si no lo creamos
     bucket = client.bucket(BUCKET_NAME)
     if not bucket.exists():
-        print(f"🔨 Creando bucket {BUCKET_NAME} en US...")
+        print(f"Creando bucket {BUCKET_NAME} en US...")
         bucket.create(location="US")
     else:
-        print(f"✅ Bucket {BUCKET_NAME} detectado.")
+        print(f"Bucket {BUCKET_NAME} detectado.")
 
     # buscamos los csv que generamos antes
     files = glob.glob(f"{SOURCE_FOLDER}/*.csv")
     if not files:
-        print("⚠️ ¡Alerta! No hay archivos CSV en la carpeta 'data_lake'.")
+        print("No hay archivos CSV en la carpeta 'data_lake'.")
         return
 
     # subimos cada archivo
@@ -30,9 +30,9 @@ def upload_files():
         filename = os.path.basename(file_path)
         blob = bucket.blob(filename) # nombre que va a tener en la nube
         
-        print(f"🚀 Subiendo {filename}...")
+        print(f"Subiendo {filename}...")
         blob.upload_from_filename(file_path)
-        print(f"   ✨ {filename} cargado ok.")
+        print(f"   {filename} cargado ok.")
 
 if __name__ == "__main__":
     # seteamos las credenciales aca directo para no tener que hacerlo en el sistema
