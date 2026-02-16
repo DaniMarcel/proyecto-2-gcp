@@ -15,12 +15,12 @@
 }}
 
 SELECT
-    -- Features (Datos para aprender)
+    -- estas son las features que le damos al modelo
     monto,
     metodo_pago,
     EXTRACT(HOUR FROM fecha_transaccion) AS hora_del_dia, 
     
-    -- Label (La respuesta correcta)
+    -- este es el label, o sea la respuesta que queremos predecir
     es_fraude
 
 FROM {{ ref('fact_transacciones') }}

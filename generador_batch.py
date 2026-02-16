@@ -4,31 +4,31 @@ import random
 from datetime import datetime, timedelta
 import os
 
-# Configuración
+# parametros generales del script
 NUM_CLIENTES = 100
 NUM_COMERCIOS = 20
-NUM_TRANSACCIONES = 5000  # Simularemos 5000 compras
-fake = Faker('es_CL')     # Datos chilenos reales
+NUM_TRANSACCIONES = 5000  # cantidad de compras que vamos a generar
+fake = Faker('es_CL')     # usamos locale chileno para los datos
 
 print("🚀 Iniciando generación del Data Lake Batch...")
 
-# --- 1. Generar Clientes (DIM_CLIENTE) ---
+# --- 1. Generamos la tabla de clientes ---
 print("👤 Generando Clientes...")
 clientes = []
 for _ in range(NUM_CLIENTES):
     cliente = {
         "cliente_id": fake.uuid4(),
         "nombre": fake.name(),
-        "rut": fake.ssn(),          # PII (Dato Sensible)
-        "email": fake.email(),      # PII (Dato Sensible)
+        "rut": fake.ssn(),          # esto despues hay que hashearlo porque es dato sensible
+        "email": fake.email(),      # idem, tambien es PII
         "fecha_registro": fake.date_between(start_date='-5y', end_date='today')
     }
     clientes.append(cliente)
 
 df_clientes = pd.DataFrame(clientes)
 
-# --- 2. Generar Comercios (DIM_COMERCIO) ---
-print("buildings Generando Comercios...")
+# --- 2. Generamos la tabla de comercios ---
+print("🏢 Generando Comercios...")
 rubros = ["Supermercado", "Combustible", "Retail", "Restaurante", "Tecnología", "Viajes"]
 comercios = []
 for _ in range(NUM_COMERCIOS):
@@ -42,59 +42,59 @@ for _ in range(NUM_COMERCIOS):
 
 df_comercios = pd.DataFrame(comercios)
 
-# --- 3. Generar Transacciones (FACT_TRANSACCIONES) ---
+# --- 3. Transacciones (tabla de hechos) ---
 print("💳 Generando Transacciones con patrones de Fraude y Errores...")
 transacciones = []
 
 for _ in range(NUM_TRANSACCIONES):
-    # Seleccionamos un cliente y comercio EXISTENTE (Integridad Referencial)
+    # tomamos un cliente y comercio que ya existan para mantener la relacion
     cliente = random.choice(clientes)
     comercio = random.choice(comercios)
     
-    # Lógica de Fraude Simulado
+    # aca simulamos fraude
     es_fraude = False
     monto = random.randint(1000, 150000)
     
-    # Patrón de Fraude 1: Montos muy altos en Retail o Viajes
+    # fraude tipo 1: montos gigantes en retail o viajes
     if comercio['rubro'] in ['Viajes', 'Tecnología'] and random.random() < 0.1:
         monto = random.randint(500000, 3000000)
         es_fraude = True
     
-    # Patrón de Fraude 2: Transacciones rápidas (lo simularemos con flags por ahora)
-    if random.random() < 0.02: # 2% de fraude aleatorio
+    # fraude tipo 2: un porcentaje aleatorio chico
+    if random.random() < 0.02: # 2% fraude random
         es_fraude = True
 
-    # --- INYECCIÓN DE DATOS SUCIOS (Para limpiar con dbt) ---
+    # --- metemos datos sucios a proposito para limpiarlos con dbt despues ---
     fecha_tx = fake.date_time_between(start_date='-1y', end_date='now')
     metodo_pago = "Tarjeta de Crédito"
     
-    # Error 1: Montos Negativos (1% de probabilidad)
+    # dato sucio 1: montos negativos (1%)
     if random.random() < 0.01:
         monto = monto * -1 
     
-    # Error 2: Fechas Futuras (0.5% de probabilidad)
+    # dato sucio 2: fechas futuras (0.5%)
     if random.random() < 0.005:
         fecha_tx = datetime.now() + timedelta(days=365)
 
-    # Error 3: Nulos en método de pago
+    # dato sucio 3: metodo de pago null
     if random.random() < 0.02:
         metodo_pago = None
 
     tx = {
         "transaccion_id": fake.uuid4(),
-        "cliente_id": cliente['cliente_id'],   # Foreign Key
-        "comercio_id": comercio['comercio_id'], # Foreign Key
+        "cliente_id": cliente['cliente_id'],   # fk a clientes
+        "comercio_id": comercio['comercio_id'], # fk a comercios
         "fecha": fecha_tx,
         "monto": monto,
         "metodo_pago": metodo_pago,
-        "es_fraude": 1 if es_fraude else 0 # Label para ML
+        "es_fraude": 1 if es_fraude else 0 # para usar como label en ML
     }
     transacciones.append(tx)
 
 df_transacciones = pd.DataFrame(transacciones)
 
-# --- 4. Guardar en CSV (Simulando nuestro Data Lake) ---
-os.makedirs("data_lake", exist_ok=True) # Carpeta contenedora
+# --- 4. Guardamos todo en CSV (esto simula el data lake) ---
+os.makedirs("data_lake", exist_ok=True)
 
 df_clientes.to_csv("data_lake/clientes_master.csv", index=False)
 df_comercios.to_csv("data_lake/comercios_master.csv", index=False)

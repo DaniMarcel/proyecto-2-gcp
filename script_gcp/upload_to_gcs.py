@@ -2,18 +2,16 @@ from google.cloud import storage
 import os
 import glob
 
-# CONFIGURACIÓN
-# PONEMOS NUESTRA ID
+# mis datos de GCP
 PROJECT_ID = "dataengineerp"
-# LE PONEMOS EL NOMBRE DE NUESTRO BUCKET
 BUCKET_NAME = "banco-datalake-daniel-2026"
 SOURCE_FOLDER = "../data_lake"
 
 def upload_files():
-    # 1. Autenticación automática usando 'credenciales.json' (si está en el entorno)
+    # nos conectamos al proyecto
     client = storage.Client(project=PROJECT_ID)
     
-    # 2. Crear o conectar con el bucket
+    # vemos si el bucket ya existe, si no lo creamos
     bucket = client.bucket(BUCKET_NAME)
     if not bucket.exists():
         print(f"🔨 Creando bucket {BUCKET_NAME} en US...")
@@ -21,22 +19,22 @@ def upload_files():
     else:
         print(f"✅ Bucket {BUCKET_NAME} detectado.")
 
-    # 3. Buscar CSVs
+    # buscamos los csv que generamos antes
     files = glob.glob(f"{SOURCE_FOLDER}/*.csv")
     if not files:
         print("⚠️ ¡Alerta! No hay archivos CSV en la carpeta 'data_lake'.")
         return
 
-    # 4. Subir (Upload)
+    # subimos cada archivo
     for file_path in files:
         filename = os.path.basename(file_path)
-        blob = bucket.blob(filename) # El nombre que tendrá en la nube
+        blob = bucket.blob(filename) # nombre que va a tener en la nube
         
         print(f"🚀 Subiendo {filename}...")
         blob.upload_from_filename(file_path)
         print(f"   ✨ {filename} cargado ok.")
 
 if __name__ == "__main__":
-    # Truco para no tener que configurar variables de entorno en Windows manualmente
+    # seteamos las credenciales aca directo para no tener que hacerlo en el sistema
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credenciales.json"
     upload_files()

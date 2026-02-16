@@ -27,7 +27,7 @@ SELECT
     hora_del_dia,
     etiqueta_real,
     predicted_es_fraude,
-    -- Aquí está el truco: Extraemos solo la probabilidad de que SEA fraude (label 1)
+    -- sacamos solo la probabilidad de que sea fraude (label=1)
     p.prob as probabilidad_fraude
 FROM predicciones,
 UNNEST(predicted_es_fraude_probs) AS p

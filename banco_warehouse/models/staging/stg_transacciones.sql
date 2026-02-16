@@ -5,20 +5,19 @@ WITH source AS (
 renamed AS (
     SELECT
         transaccion_id,
-        cliente_id,   -- Foreign Key
-        comercio_id,  -- Foreign Key
+        cliente_id,   -- fk a clientes
+        comercio_id,  -- fk a comercios
         
-        -- Asegurar que el monto sea número entero
+        -- nos aseguramos que el monto sea entero
         SAFE_CAST(monto AS INT64) AS monto,
         
-        -- 🕒 TRUCO PRO: Convertir String a Timestamp
-        -- BigQuery es inteligente, SAFE_CAST suele funcionar con formato ISO.
-        -- Si falla, devuelve NULL en lugar de romper el pipeline.
+        -- convertimos el string a timestamp
+        -- SAFE_CAST devuelve null si el dato viene malo en vez de tirar error
         SAFE_CAST(fecha AS TIMESTAMP) AS fecha_transaccion,
         
         metodo_pago,
         
-        -- El flag de fraude lo dejamos como entero (1 o 0) para usarlo en Machine Learning después
+        -- dejamos el flag de fraude como entero (1/0) para usarlo en el modelo de ML
         SAFE_CAST(es_fraude AS INT64) AS es_fraude
 
     FROM source

@@ -6,7 +6,7 @@ renamed AS (
     SELECT
         comercio_id,
         
-        -- Estandarización: Todo a mayúsculas para evitar duplicados por "Lider" vs "LIDER"
+        -- todo a mayusculas para que no haya duplicados tipo "Lider" y "LIDER"
         UPPER(nombre_comercio) AS nombre_comercio,
         UPPER(rubro) AS rubro,
         UPPER(ciudad) AS ciudad

@@ -19,7 +19,7 @@ SELECT
     t.metodo_pago,
     t.es_fraude,
     
-    -- 🧠 Lógica de Negocio Agregada: Categorización de Riesgo
+    -- agregamos una columna para clasificar el riesgo segun el monto
     CASE 
         WHEN t.monto > 1000000 THEN 'CRÍTICO'
         WHEN t.monto > 500000 THEN 'ALTO'
