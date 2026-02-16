@@ -35,4 +35,4 @@ Este proyecto implementa un Data Warehouse completo para una Fintech, procesando
 
 ---
 
-_Proyecto desarrollado como parte de un laboratorio de Ingeniería de Datos Avanzada._
+_Proyecto desarrollado como parte de mi aprendizaje practico en Ingeniería de Datos._
